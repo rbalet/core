@@ -1,5 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { _, TranslateDirective, TranslatePipe, TranslateService } from "@ngx-translate/core";
+import { map } from 'rxjs';
+import { TranslationObject } from '../../../ngx-translate/src/public-api';
 import { StandaloneComponent } from "./standalone.component";
 
 
@@ -10,7 +12,7 @@ import { StandaloneComponent } from "./standalone.component";
     templateUrl: "./app.component.html",
     styleUrl: "./app.component.scss"
 })
-export class AppComponent
+export class AppComponent implements OnInit
 {
     title = _("test-app");
 
@@ -18,5 +20,15 @@ export class AppComponent
         this.translate.addLangs(['de', 'en']);
         this.translate.setDefaultLang('en');
         this.translate.use('en');
+    }
+
+    ngOnInit() {
+      // Service Get method with a set of string[]
+      this.translate
+        .get(['demo.simple.text-as-attribute', 'demo.simple.text-as-content'])
+        .pipe(map((arr: TranslationObject) => {
+          return Object.values(arr).join(', ')
+        }))
+        .subscribe(console.log);
     }
 }
